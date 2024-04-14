@@ -11,8 +11,8 @@ namespace Logic
             return new PoolAPI(data ?? DataAbstractAPI.CreateAPI());
         }
 
-        public abstract ObservableCollection<Circle> CreateCircles(double poolWidth, double poolHeight, int circleCount);
-        public abstract ObservableCollection<Circle> UpdateCirlcePosition(double poolWidth, double poolHeight, ObservableCollection<Circle> circles);
+        public abstract ObservableCollection<Ball> CreateBalls(double poolWidth, double poolHeight, int ballsCount);
+        public abstract ObservableCollection<Ball> UpdateBallsPosition(double poolWidth, double poolHeight, ObservableCollection<Ball> balls);
 
         private class PoolAPI : PoolAbstractAPI
         {
@@ -21,30 +21,30 @@ namespace Logic
                 DataLayer = dataLayer;
             }
 
-            public override ObservableCollection<Circle> CreateCircles(double poolWidth, double poolHeight, int circleCount)
+            public override ObservableCollection<Ball> CreateBalls(double poolWidth, double poolHeight, int ballsCount)
             {
-                ObservableCollection<Circle> circles = new();
+                ObservableCollection<Ball> balls = new();
                 Random rnd = new();
-                for (int i = 0; i < circleCount; i++)
+                for (int i = 0; i < ballsCount; i++)
                 {
-                    Circle circle = new(10, rnd.Next(20, (int)poolWidth - 20), rnd.Next(20, (int)poolHeight - 20));
-                    circles.Add(circle);
+                    Ball ball = new(10, rnd.Next(20, (int)poolWidth - 20), rnd.Next(20, (int)poolHeight - 20));
+                    balls.Add(ball);
                 }
-                return circles;
+                return balls;
             }
 
-            public override ObservableCollection<Circle> UpdateCirlcePosition(double poolWidth, double poolHeight, ObservableCollection<Circle> circles)
+            public override ObservableCollection<Ball> UpdateBallsPosition(double poolWidth, double poolHeight, ObservableCollection<Ball> balls)
             {
-                ObservableCollection<Circle> newCircles = new();
-                foreach (Circle circle in circles)
+                ObservableCollection<Ball> newBalls = new();
+                foreach (Ball ball in balls)
                 {
-                    if (circle.XPos + circle.Radius + 1 > poolWidth || circle.XPos - circle.Radius - 1 < 0) circle.XSpeed *= -1;
-                    if (circle.YPos + circle.Radius + 1 > poolHeight || circle.YPos - circle.Radius - 1 < 0) circle.YSpeed *= -1;
-                    circle.XPos += circle.XSpeed;
-                    circle.YPos += circle.YSpeed;
-                    newCircles.Add(circle);
+                    if (ball.XPosition + ball.Radius + 1 > poolWidth || ball.XPosition - ball.Radius - 1 < 0) ball.XVelocity *= -1;
+                    if (ball.YPosition + ball.Radius + 1 > poolHeight || ball.YPosition - ball.Radius - 1 < 0) ball.YVelocity *= -1;
+                    ball.XPosition += ball.XVelocity;
+                    ball.YPosition += ball.YVelocity;
+                    newBalls.Add(ball);
                 }
-                return newCircles;
+                return newBalls;
             }
 
             private readonly DataAbstractAPI DataLayer;
