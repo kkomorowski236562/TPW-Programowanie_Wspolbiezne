@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Threading;
 
 namespace ViewModel
 {
@@ -14,12 +15,12 @@ namespace ViewModel
     {
         public PoolViewModel()
         {
-            _balls = new();
+            viewModelBalls = new();
             WindowHeight = 640;
             WindowWidth = 1230;
             PoolModel = new PoolModel(WindowWidth, WindowHeight);
-            StartCommand = new CommandBase(() => Start());
-            StopCommand = new CommandBase(() => Stop());
+            StartCommand = new CommandBase(Start);
+            StopCommand = new CommandBase(Stop);
         }
         public ICommand StartCommand { get; set; }
         public ICommand StopCommand { get; set; }
@@ -27,7 +28,7 @@ namespace ViewModel
         private int _count;
         public int Count
         {
-            get { return _count; }
+            get => _count;
             set
             {
                 _count = value;
@@ -37,26 +38,34 @@ namespace ViewModel
 
         private async void Start()
         {
-            Balls = PoolModel.GetStartingBallPositions(Count);
+            foreach (LogicBall logicBall in PoolModel.GetStartingBallPositions(Count))
+            {
+                ModelBall ball = new ModelBall(logicBall.GetX(), logicBall.GetY(), logicBall.GetRadius(), logicBall.GetColor());
+                viewModelBalls.Add(ball);
+                logicBall.PropertyChanged += ball.Update!;
+            }
+            PoolModel.StartThreads();
             while (PoolModel.Animating)
             {
-                await Task.Delay(15);
-                Balls = PoolModel.MoveBall(_balls);
+                await Task.Delay(10);
+                Balls = new ObservableCollection<ModelBall>(viewModelBalls);
             }
         }
 
         private void Stop()
         {
             PoolModel.Animating = false;
+            PoolModel.InterruptThreads();
+            viewModelBalls.Clear();
         }
 
-        private ObservableCollection<Ball> _balls;
-        public ObservableCollection<Ball> Balls
+        private ObservableCollection<ModelBall> viewModelBalls;
+        public ObservableCollection<ModelBall> Balls
         {
-            get => _balls;
+            get => viewModelBalls;
             set
             {
-                _balls = value;
+                viewModelBalls = value;
                 OnPropertyChanged(nameof(Balls));
             }
         }

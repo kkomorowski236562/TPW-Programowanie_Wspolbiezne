@@ -1,6 +1,8 @@
 ﻿using Data;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading;
 
 namespace Logic
 {
@@ -11,8 +13,15 @@ namespace Logic
             return new PoolAPI(data ?? DataAbstractAPI.CreateAPI());
         }
 
-        public abstract ObservableCollection<Ball> CreateBalls(double poolWidth, double poolHeight, int ballsCount);
-        public abstract ObservableCollection<Ball> UpdateBallsPosition(double poolWidth, double poolHeight, ObservableCollection<Ball> balls);
+        public abstract ObservableCollection<LogicBall> CreateBalls(double poolWidth, double poolHeight, int circleCount);
+
+        public abstract void InterruptThreads();
+
+        public abstract void StartThreads();
+
+        public abstract void CheckBoundariesCollision(LogicBall cirle);
+
+        public abstract void CheckCollisionsWithBalls(LogicBall cirle);
 
         private class PoolAPI : PoolAbstractAPI
         {
@@ -21,33 +30,81 @@ namespace Logic
                 DataLayer = dataLayer;
             }
 
-            public override ObservableCollection<Ball> CreateBalls(double poolWidth, double poolHeight, int ballsCount)
+            public override ObservableCollection<LogicBall> CreateBalls(double poolWidth, double poolHeight, int ballCount)
             {
-                ObservableCollection<Ball> balls = new();
-                Random rnd = new();
-                for (int i = 0; i < ballsCount; i++)
+                List<Ball> balls = new();
+                ObservableCollection<LogicBall> logicBalls = new();
+                DataLayer.CreatePoolWithBalls(ballCount, poolWidth, poolHeight);
+                height = DataLayer.GetPoolHeight();
+                width = DataLayer.GetPoolWidth();
+                balls = DataLayer.GetBalls();
+                foreach (Ball c in balls)
                 {
-                    Ball ball = new(10, rnd.Next(20, (int)poolWidth - 20), rnd.Next(20, (int)poolHeight - 20));
-                    balls.Add(ball);
+                    LogicBall logicBall = new LogicBall(c);
+                    c.PropertyChanged += logicBall.Update!;
+                    ballsCollection.Add(logicBall);
+                    logicBalls.Add(logicBall);
                 }
-                return balls;
+                return logicBalls;
             }
 
-            public override ObservableCollection<Ball> UpdateBallsPosition(double poolWidth, double poolHeight, ObservableCollection<Ball> balls)
+            private static bool BallsCollision(LogicBall ball)
             {
-                ObservableCollection<Ball> newBalls = new();
-                foreach (Ball ball in balls)
+                foreach (LogicBall c in ballsCollection)
                 {
-                    if (ball.XPosition + ball.Radius + 1 > poolWidth || ball.XPosition - ball.Radius - 1 < 0) ball.XVelocity *= -1;
-                    if (ball.YPosition + ball.Radius + 1 > poolHeight || ball.YPosition - ball.Radius - 1 < 0) ball.YVelocity *= -1;
-                    ball.XPosition += ball.XVelocity;
-                    ball.YPosition += ball.YVelocity;
-                    newBalls.Add(ball);
+                    double distance = Math.Ceiling(Math.Sqrt(Math.Pow((c.GetX() - ball.GetX()), 2) + Math.Pow((c.GetY() - ball.GetY()), 2)));
+                    if (c != ball && distance <= (c.GetRadius() + ball.GetRadius()) && checkBallBoundary(ball))
+                    {
+                        ball.ChangeXDirection();
+                        ball.ChangeYDirection();
+                        return true;
+                    }
                 }
-                return newBalls;
+                return false;
+            }
+
+            public static void UpdateBallSpeed(LogicBall ball)
+            {
+                if (ball.GetY() - ball.GetRadius() <= 0 || ball.GetY() + ball.GetRadius() >= height)
+                {
+                    ball.ChangeYDirection();
+                }
+                if (ball.GetX() + ball.GetRadius() >= width || ball.GetX() - ball.GetRadius() <= 0)
+                {
+                    ball.ChangeXDirection();
+                }
+            }
+
+            private static bool checkBallBoundary(LogicBall ball)
+            {
+                return ball.GetY() - ball.GetRadius() <= 0 || ball.GetX() + ball.GetRadius() >= width || ball.GetY() + ball.GetRadius() >= height || ball.GetX() - ball.GetRadius() <= 0 ? false : true;
+            }
+
+            public override void CheckBoundariesCollision(Logic.LogicBall ball)
+            {
+                UpdateBallSpeed(ball);
+            }
+
+            public override void CheckCollisionsWithBalls(Logic.LogicBall cirle)
+            {
+                BallsCollision(cirle);
+            }
+
+            public override void InterruptThreads()
+            {
+                DataLayer.InterruptThreads();
+                ballsCollection.Clear();
+            }
+
+            public override void StartThreads()
+            {
+                DataLayer.StartThreads();
             }
 
             private readonly DataAbstractAPI DataLayer;
+            private static Collection<LogicBall> ballsCollection = new();
+            private static double height;
+            private static double width;
         }
     }
 }

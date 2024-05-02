@@ -17,15 +17,20 @@ namespace Model
             PoolAPI = poolAPI ?? PoolAbstractAPI.CreateLayer();
         }
 
-        public ObservableCollection<Ball> GetStartingBallPositions(int ballCount)
+        public ObservableCollection<LogicBall> GetStartingBallPositions(int ballCount)
         {
             Animating = true;
-            return PoolAPI.CreateBalls(_canvasWidth, _canvasHeight, ballCount);
+            return PoolAPI.CreateBalls(_canvasWidth, _canvasHeight, ballCount); ;
         }
 
-        public ObservableCollection<Ball> MoveBall(ObservableCollection<Ball> balls)
+        public void InterruptThreads()
         {
-            return PoolAPI.UpdateBallsPosition(_canvasWidth, _canvasHeight, balls);
+            PoolAPI.InterruptThreads();
+        }
+
+        public void StartThreads()
+        {
+            PoolAPI.StartThreads();
         }
 
         private bool _animating;
