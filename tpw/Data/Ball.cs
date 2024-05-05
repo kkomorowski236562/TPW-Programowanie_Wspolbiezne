@@ -18,13 +18,13 @@ namespace Data
         }
 
         public int Radius { get; }
-        public double XPos { get; internal set; }
-        public double YPos { get; internal set; }
-        public string Color { get; internal set; }
-        public int XVelocity { internal get; set; }
-        public int YVelocity { internal get; set; }
+        public double XPos { get; private set; }
+        public double YPos { get; private set; }
+        public string Color { get; private set; }
+        public int XVelocity { private get; set; }
+        public int YVelocity { private get; set; }
 
-        public double Mass { get; internal set; }
+        public double Mass { get; private set; }
 
         public Thread Thread { get; set; }
 
