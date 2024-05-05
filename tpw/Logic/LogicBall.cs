@@ -39,9 +39,9 @@ namespace Logic
 
         public void Update(Object s, PropertyChangedEventArgs e)
         {
-            Data.Ball cirlce = (Data.Ball)s;
-            X = ball.XPos;
-            Y = ball.YPos;
+            Data.Ball ball = (Data.Ball)s;
+            X = this.ball.XPos;
+            Y = this.ball.YPos;
             PoolAbstractAPI.CreateLayer().CheckBoundariesCollision(this);
             PoolAbstractAPI.CreateLayer().CheckCollisionsWithBalls(this);
         }

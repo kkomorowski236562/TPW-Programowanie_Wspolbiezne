@@ -18,17 +18,17 @@ namespace Data
         }
 
         public int Radius { get; }
-        public double XPos { get; set; }
-        public double YPos { get; set; }
-        public string Color { get; set; }
-        public int XSpeed { get; set; }
-        public int YSpeed { get; set; }
+        public double XPos { get; internal set; }
+        public double YPos { get; internal set; }
+        public string Color { get; internal set; }
+        public int XVelocity { internal get; set; }
+        public int YVelocity { internal get; set; }
 
-        public double Mass { get; set; }
+        public double Mass { get; internal set; }
 
         public Thread Thread { get; set; }
 
-        public Ball(double XPos, double YPos)
+        internal Ball(double XPos, double YPos)
         {
             Random rnd = new();
             this.Radius = 15;
@@ -36,31 +36,31 @@ namespace Data
             this.YPos = YPos;
             this.Color = String.Format("#{0:X6}", rnd.Next(0x1000000));
             this.Mass = 5.0;
-            while (XSpeed == 0)
+            while (XVelocity == 0)
             {
-                XSpeed = rnd.Next(-3, 4);
+                XVelocity = rnd.Next(-3, 4);
             }
-            while (YSpeed == 0)
+            while (YVelocity == 0)
             {
-                YSpeed = rnd.Next(-3, 4);
+                YVelocity = rnd.Next(-3, 4);
             }
         }
 
         public void Move()
         {
-            this.XPos += this.XSpeed;
-            this.YPos += this.YSpeed;
+            this.XPos += this.XVelocity;
+            this.YPos += this.YVelocity;
             OnPropertyChanged("Move");
         }
 
         public void ChangeDirectionX()
         {
-            this.XSpeed *= -1;
+            this.XVelocity *= -1;
         }
 
         public void ChangeDirectionY()
         {
-            this.YSpeed *= -1;
+            this.YVelocity *= -1;
         }
     }
 }
