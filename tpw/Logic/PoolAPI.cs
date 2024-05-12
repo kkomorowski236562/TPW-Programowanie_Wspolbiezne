@@ -20,8 +20,7 @@ namespace Logic
         public abstract void StartThreads();
 
         public abstract void CheckBoundariesCollision(LogicBall cirle);
-
-
+        public abstract void CheckCollisionsWithBalls(LogicBall cirle);
         private class PoolAPI : PoolAbstractAPI
         {
             public PoolAPI(DataAbstractAPI dataLayer)
@@ -46,7 +45,20 @@ namespace Logic
                 }
                 return logicBalls;
             }
-
+            private static bool BallsCollision(LogicBall ball)
+            {
+                foreach (LogicBall c in ballsCollection)
+                {
+                    double distance = Math.Ceiling(Math.Sqrt(Math.Pow((c.GetX() - ball.GetX()), 2) + Math.Pow((c.GetY() - ball.GetY()), 2)));
+                    if (c != ball && distance <= (c.GetRadius() + ball.GetRadius()) && checkBallBoundary(ball))
+                    {
+                        ball.ChangeXDirection();
+                        ball.ChangeYDirection();
+                        return true;
+                    }
+                }
+                return false;
+            }
 
             public static void UpdateBallSpeed(LogicBall ball)
             {
@@ -70,7 +82,10 @@ namespace Logic
                 UpdateBallSpeed(ball);
             }
 
-
+            public override void CheckCollisionsWithBalls(Logic.LogicBall cirle)
+            {
+                BallsCollision(cirle);
+            }
             public override void InterruptThreads()
             {
                 DataLayer.InterruptThreads();

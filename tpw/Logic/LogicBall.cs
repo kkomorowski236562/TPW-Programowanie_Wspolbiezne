@@ -43,6 +43,7 @@ namespace Logic
             X = this.ball.XPos;
             Y = this.ball.YPos;
             PoolAbstractAPI.CreateLayer().CheckBoundariesCollision(this);
+            PoolAbstractAPI.CreateLayer().CheckCollisionsWithBalls(this);
         }
 
 
