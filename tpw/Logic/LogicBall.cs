@@ -2,86 +2,62 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Logic
 {
-    public class LogicBall : INotifyPropertyChanged
+    internal class LogicBall : AbstractLogicBall, INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public override event PropertyChangedEventHandler? PropertyChanged;
 
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        private double _x;
-        public double X
+
+        private Vector2 _position;
+
+        internal LogicBall(Data.AbstractBall b)
         {
-            get => _x;
-            set
-            {
-                _x = value;
-                OnPropertyChanged("X");
-            }
+            ball = b;
         }
-        private double _y;
-        public double Y
+
+        public override Vector2 Postion
         {
-            get => _y;
-            set
+            get => _position;
+            internal set
             {
-                _y = value;
-                OnPropertyChanged("Y");
+                _position = value;
+                OnPropertyChanged("Position");
             }
         }
 
-        public void Update(Object s, PropertyChangedEventArgs e)
+        public override void Update(Object s, PropertyChangedEventArgs e)
         {
-            Data.Ball ball = (Data.Ball)s;
-            X = this.ball.XPos;
-            Y = this.ball.YPos;
+            Data.AbstractBall ball = (Data.AbstractBall)s;
+            Postion = ball.Position;
             PoolAbstractAPI.CreateLayer().CheckBoundariesCollision(this);
-            PoolAbstractAPI.CreateLayer().CheckCollisionsWithBalls(this);
+            PoolAbstractAPI.CreateLayer().CheckCollisionsWithCircles(this);
         }
 
+        private readonly Data.AbstractBall ball;
 
-        private readonly Data.Ball ball;
-
-        public LogicBall(Data.Ball c)
-        {
-            ball = c;
-        }
-
-        public void ChangeXDirection()
+        public override void ChangeXDirection()
         {
             ball.ChangeDirectionX();
         }
 
-        public void ChangeYDirection()
+        public override void ChangeYDirection()
         {
             ball.ChangeDirectionY();
         }
 
-        public double GetX()
-        {
-            return X;
-        }
-
-        public double GetY()
-        {
-            return Y;
-        }
-
-        public double GetRadius()
+        public override double GetRadius()
         {
             return ball.Radius;
-        }
-
-        public String GetColor()
-        {
-            return ball.Color;
         }
     }
 }

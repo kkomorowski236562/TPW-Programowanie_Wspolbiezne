@@ -17,7 +17,7 @@ namespace Model
             PoolAPI = poolAPI ?? PoolAbstractAPI.CreateLayer();
         }
 
-        public ObservableCollection<LogicBall> GetStartingBallPositions(int ballCount)
+        public ObservableCollection<AbstractLogicBall> GetStartingBallPositions(int ballCount)
         {
             Animating = true;
             return PoolAPI.CreateBalls(_canvasWidth, _canvasHeight, ballCount); ;

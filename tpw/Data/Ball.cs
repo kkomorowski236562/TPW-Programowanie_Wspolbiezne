@@ -1,67 +1,51 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 
 namespace Data
 {
-    public class Ball : INotifyPropertyChanged
+    internal class Ball : AbstractBall, INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public override event PropertyChangedEventHandler? PropertyChanged;
 
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public int Radius { get; }
-        public double XPos { get; private set; }
-        public double YPos { get; private set; }
-        public string Color { get; private set; }
-        public int XVelocity { private get; set; }
-        public int YVelocity { private get; set; }
-
-        public double Mass { get; private set; }
-
-        public Thread Thread { get; set; }
-
-        internal Ball(double XPos, double YPos)
+        internal Ball(Vector2 position)
         {
             Random rnd = new();
-            this.Radius = 15;
-            this.XPos = XPos;
-            this.YPos = YPos;
-            this.Color = String.Format("#{0:X6}", rnd.Next(0x1000000));
-            this.Mass = 5.0;
-            while (XVelocity == 0)
+            Radius = 15;
+            Position = position;
+            Speed = new();
+            while (Speed.X == 0 || Speed.Y == 0)
             {
-                XVelocity = rnd.Next(-3, 4);
-            }
-            while (YVelocity == 0)
-            {
-                YVelocity = rnd.Next(-3, 4);
+                Speed = new(rnd.Next(-3, 4));
             }
         }
 
-        public void Move()
+        internal override void Move(Stopwatch timer)
         {
-            this.XPos += this.XVelocity;
-            this.YPos += this.YVelocity;
+            int multiplier = (int)(timer.ElapsedMilliseconds / 1000);
+            Position += new Vector2(Speed.X + multiplier, Speed.Y + multiplier);
             OnPropertyChanged("Move");
         }
 
-        public void ChangeDirectionX()
+        public override void ChangeDirectionX()
         {
-            this.XVelocity *= -1;
+            Speed = new Vector2(Speed.X * -1, Speed.Y);
         }
 
-        public void ChangeDirectionY()
+        public override void ChangeDirectionY()
         {
-            this.YVelocity *= -1;
+            Speed = new Vector2(Speed.X, Speed.Y * -1);
         }
     }
 }
-

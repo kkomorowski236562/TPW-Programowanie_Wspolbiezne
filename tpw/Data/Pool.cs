@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading;
 
@@ -10,7 +12,7 @@ namespace Data
     internal class Pool
     {
         private readonly Object locked = new();
-        private List<Ball> balls = new();
+        private List<AbstractBall> balls = new();
         private Collection<Thread> threads = new();
         private double poolHeight;
         private double poolWidth;
@@ -36,16 +38,16 @@ namespace Data
                     xposition = rnd.Next(30, (int)poolWidth - 30);
                     yposition = rnd.Next(30, (int)poolHeight - 30);
                 }
-                balls.Add(new Ball(xposition, yposition));
+                balls.Add(AbstractBall.CreateCircle(new Vector2(xposition, yposition)));
             }
         }
 
         private bool CanCreate(int x, int y)
         {
             if (balls.Count == 0) return true;
-            foreach (Ball c in balls)
+            foreach (AbstractBall c in balls)
             {
-                double distance = Math.Sqrt(Math.Pow((c.XPos - x), 2) + Math.Pow((c.YPos - y), 2));
+                double distance = Math.Sqrt(Math.Pow((c.Position.X - x), 2) + Math.Pow((c.Position.Y - y), 2));
                 if (distance <= (2 * c.Radius + 20))
                 {
                     return false;
@@ -56,26 +58,28 @@ namespace Data
 
         private void CreateThreads()
         {
-            foreach (Ball c in balls)
+            foreach (AbstractBall c in balls)
             {
                 Thread t = new Thread(() =>
                 {
+                    Stopwatch timer = new Stopwatch();
+                    timer.Start();
                     while (true)
                     {
                         try
                         {
-                            Thread.Sleep(15);
                             lock (locked)
                             {
-                                c.Move();
-
+                                c.Move(timer);
                             }
+                            Thread.Sleep(15);
+                            timer.Reset();
+                            timer.Start();
                         }
                         catch (Exception e)
                         {
                             break;
                         }
-
                     }
                 });
                 threads.Add(t);
@@ -98,7 +102,7 @@ namespace Data
             }
         }
 
-        public List<Ball> GetBalls()
+        public List<AbstractBall> GetBalls()
         {
             return balls;
         }
@@ -112,6 +116,5 @@ namespace Data
         {
             return poolWidth;
         }
-
     }
 }

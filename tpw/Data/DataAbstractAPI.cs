@@ -14,7 +14,7 @@ namespace Data
 
         public abstract void CreatePoolWithBalls(int amount, double widthOfCanvas, double heightOfCanvas);
 
-        public abstract List<Ball> GetBalls();
+        public abstract List<AbstractBall> GetBalls();
 
         public abstract void InterruptThreads();
 
@@ -43,7 +43,7 @@ namespace Data
                 this.pool = new Pool(amount, widthOfCanvas, heightOfCanvas);
             }
 
-            public override List<Ball> GetBalls()
+            public override List<AbstractBall> GetBalls()
             {
                 return pool.GetBalls();
             }

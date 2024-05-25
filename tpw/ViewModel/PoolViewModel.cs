@@ -38,9 +38,9 @@ namespace ViewModel
 
         private async void Start()
         {
-            foreach (LogicBall logicBall in PoolModel.GetStartingBallPositions(Count))
+            foreach (AbstractLogicBall logicBall in PoolModel.GetStartingBallPositions(Count))
             {
-                ModelBall ball = new ModelBall(logicBall.GetX(), logicBall.GetY(), logicBall.GetRadius(), logicBall.GetColor());
+                ModelBall ball = new ModelBall(logicBall.Postion.X, logicBall.Postion.Y, logicBall.GetRadius());
                 viewModelBalls.Add(ball);
                 logicBall.PropertyChanged += ball.Update!;
             }
