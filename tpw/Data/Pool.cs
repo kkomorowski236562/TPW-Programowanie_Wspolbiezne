@@ -62,19 +62,15 @@ namespace Data
             {
                 Thread t = new Thread(() =>
                 {
-                    Stopwatch timer = new Stopwatch();
-                    timer.Start();
                     while (true)
                     {
                         try
                         {
                             lock (locked)
                             {
-                                c.Move(timer);
+                                c.Move();
                             }
                             Thread.Sleep(15);
-                            timer.Reset();
-                            timer.Start();
                         }
                         catch (Exception e)
                         {
