@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ViewModel;
 
-namespace ViewModelTest
+namespace Tests
 {
     [TestClass]
     public class ViewModelTest

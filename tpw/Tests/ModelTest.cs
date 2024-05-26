@@ -1,7 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Model;
 
-namespace ModelTest
+namespace Tests
 {
     [TestClass]
     public class ModelTest
@@ -21,6 +20,5 @@ namespace ModelTest
         {
             Assert.AreEqual(Model.Animating, false);
         }
-
     }
 }

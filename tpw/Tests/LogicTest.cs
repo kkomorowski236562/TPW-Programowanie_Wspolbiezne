@@ -1,7 +1,7 @@
 ﻿using Logic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace LogicTest
+namespace Tests
 {
     [TestClass]
     public class LogicTest

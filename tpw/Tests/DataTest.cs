@@ -1,42 +1,42 @@
 ﻿using Data;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Numerics;
 
 namespace Tests
 {
     [TestClass]
     public class DataTest
     {
+
         private DataAbstractAPI TestingAPI = DataAbstractAPI.CreateAPI();
 
         [TestMethod]
-        public void BallCreationTest()
+        public void CircleCreationTest()
         {
             TestingAPI.CreatePoolWithBalls(10, 1000, 1000);
-            var balls = TestingAPI.GetBalls();
-            Assert.AreEqual(10, balls.Count, "Niepowodzenie.");
+            Assert.AreEqual(TestingAPI.GetBalls().Count, 10);
         }
 
         [TestMethod]
-        public void PoolWidthTest()
+        public void GetWidthTest()
         {
             TestingAPI.CreatePoolWithBalls(10, 500, 1000);
-            Assert.AreEqual(500, TestingAPI.GetPoolWidth(), "Niepowodzenie.");
+            Assert.AreEqual(TestingAPI.GetPoolWidth(), 500);
         }
 
         [TestMethod]
-        public void PoolHeightTest()
+        public void GetHeightTest()
         {
             TestingAPI.CreatePoolWithBalls(10, 500, 1000);
-            Assert.AreEqual(1000, TestingAPI.GetPoolHeight(), "Niepowodzenie.");
+            Assert.AreEqual(TestingAPI.GetPoolHeight(), 1000);
         }
 
         [TestMethod]
-        public void BallPositionTest()
+        public void CirclePosTest()
         {
-            TestingAPI.CreatePoolWithBalls(1, 1000, 1000);
-            var ball = TestingAPI.GetBalls().First();
-            bool isWithinBounds = ball.XPos >= 30 && ball.XPos <= 970 && ball.YPos >= 30 && ball.YPos <= 970;
-            Assert.IsTrue(isWithinBounds, "Niepowodzenie.");
+            AbstractBall c = AbstractBall.CreateCircle(new Vector2(10, 15));
+            Assert.AreEqual(c.Position.X, 10);
+            Assert.AreEqual(c.Position.Y, 15);
         }
 
     }
