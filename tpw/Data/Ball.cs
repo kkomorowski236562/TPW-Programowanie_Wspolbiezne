@@ -31,11 +31,10 @@ namespace Data
             }
         }
 
-        internal override void Move(Stopwatch timer)
+        internal override void Move()
         {
-            int multiplier = (int)(timer.ElapsedMilliseconds / 1000);
-            Position += new Vector2(Speed.X + multiplier, Speed.Y + multiplier);
-            OnPropertyChanged("Move");
+            Position += Speed;
+            OnPropertyChanged("Position");
         }
 
         public override void ChangeDirectionX()
@@ -48,4 +47,5 @@ namespace Data
             Speed = new Vector2(Speed.X, Speed.Y * -1);
         }
     }
+
 }

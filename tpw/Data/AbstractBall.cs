@@ -14,7 +14,7 @@ namespace Data
         public Vector2 Position { get; internal set; }
         public Vector2 Speed { get; internal set; }
 
-        internal abstract void Move(Stopwatch timer);
+        internal abstract void Move();
         public abstract void ChangeDirectionX();
         public abstract void ChangeDirectionY();
 
