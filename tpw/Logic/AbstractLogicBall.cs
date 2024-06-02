@@ -1,16 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Numerics;
 
 namespace Logic
 {
     public abstract class AbstractLogicBall
     {
-        public abstract event PropertyChangedEventHandler? PropertyChanged;
-        public abstract Vector2 Postion { get; internal set; }
+        public abstract event EventHandler? PositionChanged;
+        public abstract Vector2 Position { get; internal set; }
 
-        public abstract void Update(Object s, PropertyChangedEventArgs e);
+        public abstract void Update(Object s, EventArgs e);
 
         public abstract void ChangeXDirection();
 

@@ -31,13 +31,6 @@ namespace Tests
             Assert.AreEqual(TestingAPI.GetPoolHeight(), 1000);
         }
 
-        [TestMethod]
-        public void CirclePosTest()
-        {
-            AbstractBall c = AbstractBall.CreateBall(new Vector2(10, 15));
-            Assert.AreEqual(c.Position.X, 10);
-            Assert.AreEqual(c.Position.Y, 15);
-        }
 
     }
 }

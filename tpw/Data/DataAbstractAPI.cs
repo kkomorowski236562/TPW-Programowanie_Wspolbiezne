@@ -32,6 +32,12 @@ namespace Data
         private class API : DataAbstractAPI
         {
             private Pool pool;
+            private Logger logger;
+
+            public API()
+            {
+                logger = Logger.GetInstance();
+            }
 
             public override void Connect()
             {
@@ -67,7 +73,7 @@ namespace Data
             {
                 return pool.GetPoolWidth();
             }
-
         }
+
     }
 }

@@ -1,22 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
 using System.Numerics;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Logic
 {
-    internal class LogicBall : AbstractLogicBall, INotifyPropertyChanged
+    internal class LogicBall : AbstractLogicBall
     {
-        public override event PropertyChangedEventHandler? PropertyChanged;
-
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+        public override event EventHandler? PositionChanged;
 
         private Vector2 _position;
 
@@ -25,20 +14,20 @@ namespace Logic
             ball = b;
         }
 
-        public override Vector2 Postion
+        public override Vector2 Position
         {
             get => _position;
             internal set
             {
                 _position = value;
-                OnPropertyChanged("Position");
+                PositionChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
-        public override void Update(Object s, PropertyChangedEventArgs e)
+        public override void Update(Object s, EventArgs e)
         {
             Data.AbstractBall ball = (Data.AbstractBall)s;
-            Postion = ball.Position;
+            Position = ball.Position;
             PoolAbstractAPI.CreateLayer().CheckBoundariesCollision(this);
             PoolAbstractAPI.CreateLayer().CheckCollisionsWithCircles(this);
         }

@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Data
 {
@@ -16,7 +12,6 @@ namespace Data
         public double YSpeed { get; set; }
         public int Hash { get; set; }
         public string Date { get; set; }
-
         public InformationAboutBall(double XPos, double YPos, double XSpeed, double YSpeed, int Hash)
         {
             this.XPos = XPos;
@@ -30,7 +25,7 @@ namespace Data
             Date = DateTime.Now.ToString(fullPattern);
         }
 
-        public override string ToString()
+        public string ToString()
         {
             string toWrite = "circle:" + "\n";
             toWrite += "  - Hash: " + Hash + "\n";

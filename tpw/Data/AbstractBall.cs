@@ -1,27 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Data
 {
     public abstract class AbstractBall
     {
-        public abstract event PropertyChangedEventHandler? PropertyChanged;
-        public int Radius { get; internal set; }
-        public Vector2 Position { get; internal set; }
-        public Vector2 Speed { get; internal set; }
+        public abstract event EventHandler? PositionChanged;
 
-        internal abstract void Move(Stopwatch timer);
+        public int Radius { get; internal set; }
+        public abstract Vector2 Position { get; internal set; }
+        public abstract Vector2 Speed { get; internal set; }
+
+        internal abstract void Move();
         public abstract void ChangeDirectionX();
         public abstract void ChangeDirectionY();
-        public abstract void Update(Object s, PropertyChangedEventArgs e);
+        public abstract void Update(object s, EventArgs e);
 
-        public static AbstractBall CreateBall(Vector2 position)
+        public static AbstractBall CreateCircle(Vector2 position)
         {
             return new Ball(position);
         }

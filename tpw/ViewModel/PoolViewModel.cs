@@ -1,13 +1,8 @@
 ﻿using Logic;
 using Model;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using System.Threading;
 
 namespace ViewModel
 {
@@ -15,13 +10,14 @@ namespace ViewModel
     {
         public PoolViewModel()
         {
-            viewModelBalls = new();
+            viewModelBalls = new ObservableCollection<ModelBall>();
             WindowHeight = 640;
             WindowWidth = 1230;
             PoolModel = new PoolModel(WindowWidth, WindowHeight);
             StartCommand = new CommandBase(Start);
             StopCommand = new CommandBase(Stop);
         }
+
         public ICommand StartCommand { get; set; }
         public ICommand StopCommand { get; set; }
 
@@ -40,9 +36,9 @@ namespace ViewModel
         {
             foreach (AbstractLogicBall logicBall in PoolModel.GetStartingBallPositions(Count))
             {
-                ModelBall ball = new ModelBall(logicBall.Postion.X, logicBall.Postion.Y, logicBall.GetRadius());
+                ModelBall ball = new ModelBall(logicBall.Position.X, logicBall.Position.Y, logicBall.GetRadius());
                 viewModelBalls.Add(ball);
-                logicBall.PropertyChanged += ball.Update!;
+                logicBall.PositionChanged += ball.Update!;
             }
             PoolModel.StartThreads();
             while (PoolModel.Animating)
@@ -69,6 +65,7 @@ namespace ViewModel
                 OnPropertyChanged(nameof(Balls));
             }
         }
+
         public int WindowHeight { get; }
         public int WindowWidth { get; }
 

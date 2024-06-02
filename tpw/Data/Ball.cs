@@ -1,56 +1,74 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
 using System.Numerics;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading;
 
 namespace Data
 {
-    internal class Ball : AbstractBall, INotifyPropertyChanged
+    internal class Ball : AbstractBall
     {
-        public override event PropertyChangedEventHandler? PropertyChanged;
+        private Vector2 _position;
+        private Vector2 _speed;
+        private EventHandler? _positionChanged;
 
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        public override event EventHandler? PositionChanged
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            add
+            {
+                _positionChanged += value;
+            }
+            remove
+            {
+                _positionChanged -= value;
+            }
         }
 
         internal Ball(Vector2 position)
         {
             Random rnd = new();
             Radius = 15;
-            Position = position;
-            Speed = new();
-            while (Speed.X == 0 || Speed.Y == 0)
+            _position = position;
+            _speed = new Vector2(rnd.Next(-3, 4), rnd.Next(-3, 4));
+
+            while (_speed.X == 0 || _speed.Y == 0)
             {
-                Speed = new(rnd.Next(-3, 4));
+                _speed = new Vector2(rnd.Next(-3, 4), rnd.Next(-3, 4));
             }
         }
 
-        internal override void Move(Stopwatch timer)
+        public override Vector2 Position
         {
-            int multiplier = (int)(timer.ElapsedMilliseconds / 1000);
-            Position += new Vector2(Speed.X + multiplier, Speed.Y + multiplier);
-            OnPropertyChanged("Move");
+            get => _position;
+            internal set
+            {
+                _position = value;
+                _positionChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public override Vector2 Speed
+        {
+            get => _speed;
+            internal set => _speed = value;
+        }
+
+        internal override void Move()
+        {
+            _position += _speed;
+            _positionChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public override void ChangeDirectionX()
         {
-            Speed = new Vector2(Speed.X * -1, Speed.Y);
+            _speed = new Vector2(_speed.X * -1, _speed.Y);
         }
 
         public override void ChangeDirectionY()
         {
-            Speed = new Vector2(Speed.X, Speed.Y * -1);
+            _speed = new Vector2(_speed.X, _speed.Y * -1);
         }
 
-        public override void Update(Object s, PropertyChangedEventArgs e)
+        public override void Update(object s, EventArgs e)
         {
-            Logger.GetInstance().SaveDataAsYaml(new InformationAboutBall(Position.X, Position.Y, Speed.X, Speed.Y, this.GetHashCode()));
+            Logger.GetInstance().SaveDataAsYaml(new InformationAboutBall(_position.X, _position.Y, _speed.X, _speed.Y, GetHashCode()));
         }
     }
 }

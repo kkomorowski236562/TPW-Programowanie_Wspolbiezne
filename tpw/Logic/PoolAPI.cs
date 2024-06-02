@@ -40,7 +40,7 @@ namespace Logic
                 foreach (AbstractBall b in balls)
                 {
                     AbstractLogicBall logicBall = AbstractLogicBall.CreateBall(b);
-                    b.PropertyChanged += logicBall.Update!;
+                    b.PositionChanged += logicBall.Update!;
                     ballsCollection.Add(logicBall);
                     logicBalls.Add(logicBall);
                 }
@@ -73,11 +73,33 @@ namespace Logic
             private static double height;
             private static double width;
 
+            private static void ChangeXDirection(AbstractLogicBall ball)
+            {
+                ball.ChangeXDirection();
+            }
+
+            private static void ChangeYDirection(AbstractLogicBall ball)
+            {
+                ball.ChangeYDirection();
+            }
+
+            private static void UpdateBallSpeed(AbstractLogicBall ball)
+            {
+                if (ball.Position.Y - ball.GetRadius() <= 0 || ball.Position.Y + ball.GetRadius() >= height)
+                {
+                    ChangeYDirection(ball);
+                }
+                if (ball.Position.X + ball.GetRadius() >= width || ball.Position.X - ball.GetRadius() <= 0)
+                {
+                    ChangeXDirection(ball);
+                }
+            }
+
             private static bool BallsCollision(AbstractLogicBall ball)
             {
                 foreach (AbstractLogicBall b in ballsCollection)
                 {
-                    double distance = Math.Ceiling(Math.Sqrt(Math.Pow((b.Postion.X - ball.Postion.X), 2) + Math.Pow((b.Postion.Y - ball.Postion.Y), 2)));
+                    double distance = Math.Ceiling(Math.Sqrt(Math.Pow((b.Position.X - ball.Position.X), 2) + Math.Pow((b.Position.Y - ball.Position.Y), 2)));
                     if (b != ball && distance <= (b.GetRadius() + ball.GetRadius()) && checkBallBoundary(ball))
                     {
                         ball.ChangeXDirection();
@@ -88,21 +110,9 @@ namespace Logic
                 return false;
             }
 
-            private static void UpdateBallSpeed(AbstractLogicBall ball)
-            {
-                if (ball.Postion.Y - ball.GetRadius() <= 0 || ball.Postion.Y + ball.GetRadius() >= height)
-                {
-                    ball.ChangeYDirection();
-                }
-                if (ball.Postion.X + ball.GetRadius() >= width || ball.Postion.X - ball.GetRadius() <= 0)
-                {
-                    ball.ChangeXDirection();
-                }
-            }
-
             private static bool checkBallBoundary(AbstractLogicBall ball)
             {
-                return ball.Postion.Y - ball.GetRadius() <= 0 || ball.Postion.X + ball.GetRadius() >= width || ball.Postion.Y + ball.GetRadius() >= height || ball.Postion.X - ball.GetRadius() <= 0 ? false : true;
+                return ball.Position.Y - ball.GetRadius() <= 0 || ball.Position.X + ball.GetRadius() >= width || ball.Position.Y + ball.GetRadius() >= height || ball.Position.X - ball.GetRadius() <= 0 ? false : true;
             }
         }
     }

@@ -2,9 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Model
 {
@@ -41,9 +38,7 @@ namespace Model
         }
 
         private readonly double _canvasWidth;
-
         private readonly double _canvasHeight;
-
         private readonly PoolAbstractAPI? PoolAPI = default;
     }
 }

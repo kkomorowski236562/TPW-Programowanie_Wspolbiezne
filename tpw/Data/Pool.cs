@@ -1,28 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Linq;
 using System.Numerics;
-using System.Text;
 using System.Threading;
 
 namespace Data
 {
     internal class Pool
     {
-        private readonly Object locked = new();
-        private readonly Object lockedToSave = new();
-        private List<AbstractBall> balls = new();
-        private Collection<Thread> threads = new();
-        private Collection<Thread> threadsToSave = new();
-        private double poolHeight;
-        private double poolWidth;
+        private readonly object _lock = new();
+        private List<AbstractBall> _balls = new();
+        private List<Thread> _threads = new();
+        private double _poolHeight;
+        private double _poolWidth;
 
-        public Pool(int amount, double widthOfCanvas, double heightOfCanvas)
+        public Pool(int amount, double poolWidth, double poolHeight)
         {
-            this.poolHeight = heightOfCanvas;
-            this.poolWidth = widthOfCanvas;
+            _poolWidth = poolWidth;
+            _poolHeight = poolHeight;
             CreateBalls(amount);
             CreateThreads();
         }
@@ -32,24 +27,24 @@ namespace Data
             Random rnd = new();
             for (int i = 0; i < amount; i++)
             {
-                int xposition = rnd.Next(30, (int)poolWidth - 30);
-                int yposition = rnd.Next(30, (int)poolHeight - 30);
-                while (!CanCreate(xposition, yposition))
+                int x = rnd.Next(30, (int)_poolWidth - 30);
+                int y = rnd.Next(30, (int)_poolHeight - 30);
+                while (!CanCreate(x, y))
                 {
-                    xposition = rnd.Next(30, (int)poolWidth - 30);
-                    yposition = rnd.Next(30, (int)poolHeight - 30);
+                    x = rnd.Next(30, (int)_poolWidth - 30);
+                    y = rnd.Next(30, (int)_poolHeight - 30);
                 }
-                balls.Add(AbstractBall.CreateBall(new Vector2(xposition, yposition)));
+                _balls.Add(AbstractBall.CreateCircle(new Vector2(x, y)));
             }
         }
 
         private bool CanCreate(int x, int y)
         {
-            if (balls.Count == 0) return true;
-            foreach (AbstractBall c in balls)
+            if (_balls.Count == 0) return true;
+            foreach (var ball in _balls)
             {
-                double distance = Math.Sqrt(Math.Pow((c.Position.X - x), 2) + Math.Pow((c.Position.Y - y), 2));
-                if (distance <= (2 * c.Radius + 20))
+                double distance = Math.Sqrt(Math.Pow(ball.Position.X - x, 2) + Math.Pow(ball.Position.Y - y, 2));
+                if (distance <= 2 * ball.Radius + 20)
                 {
                     return false;
                 }
@@ -59,79 +54,61 @@ namespace Data
 
         private void CreateThreads()
         {
-            foreach (AbstractBall c in balls)
+            foreach (var ball in _balls)
             {
-                Thread t = new Thread(() =>
+                var thread = new Thread(() =>
                 {
-                    Stopwatch timer = new Stopwatch();
-                    timer.Start();
                     while (true)
                     {
                         try
                         {
-                            lock (locked)
+                            lock (_lock)
                             {
-                                c.Move(timer);
+                                ball.Update(this, EventArgs.Empty);
+                                ball.Move();
                             }
                             Thread.Sleep(15);
-                            timer.Reset();
-                            timer.Start();
                         }
-                        catch (Exception e)
+                        catch (ThreadInterruptedException)
                         {
                             break;
                         }
                     }
                 });
-                threads.Add(t);
-                Thread tToSave = new Thread(() =>
-                {
-                    lock (lockedToSave)
-                    {
-                        c.PropertyChanged += c.Update!;
-                    }
-                });
-                threadsToSave.Add(tToSave);
+                _threads.Add(thread);
             }
         }
 
         public void StartThreads()
         {
-            foreach (Thread t in threads)
+            foreach (var thread in _threads)
             {
-                t.Start();
-            }
-            foreach (Thread t in threadsToSave)
-            {
-                t.Start();
+                thread.Start();
             }
         }
 
         public void InterruptThreads()
         {
-            foreach (Thread t in threads)
+            foreach (var thread in _threads)
             {
-                t.Interrupt();
+                thread.Interrupt();
             }
-            foreach (Thread t in threadsToSave)
-            {
-                t.Interrupt();
-            }
+            _threads.Clear();
         }
 
         public List<AbstractBall> GetBalls()
         {
-            return balls;
+            return _balls;
         }
 
         public double GetPoolHeight()
         {
-            return poolHeight;
+            return _poolHeight;
         }
 
         public double GetPoolWidth()
         {
-            return poolWidth;
+            return _poolWidth;
         }
     }
 }
