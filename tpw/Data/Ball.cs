@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -11,7 +10,7 @@ using System.Threading;
 
 namespace Data
 {
-    class Ball : AbstractBall, INotifyPropertyChanged
+    internal class Ball : AbstractBall, INotifyPropertyChanged
     {
         public override event PropertyChangedEventHandler? PropertyChanged;
 
@@ -20,7 +19,7 @@ namespace Data
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public Ball(Vector2 position)
+        internal Ball(Vector2 position)
         {
             Random rnd = new();
             Radius = 15;
@@ -55,4 +54,3 @@ namespace Data
         }
     }
 }
-

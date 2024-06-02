@@ -1,10 +1,14 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Data
 {
     internal class Logger
     {
-
         private Logger() { }
 
         private static Logger _instance;
@@ -24,6 +28,5 @@ namespace Data
             file.Write(o.ToString());
             file.Close();
         }
-
     }
 }

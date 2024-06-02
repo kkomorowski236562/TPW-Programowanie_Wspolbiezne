@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Numerics;
+using System.Text;
 using System.Threading;
 
 namespace Data
@@ -27,7 +29,6 @@ namespace Data
 
         public void CreateBalls(int amount)
         {
-
             Random rnd = new();
             for (int i = 0; i < amount; i++)
             {
@@ -45,10 +46,10 @@ namespace Data
         private bool CanCreate(int x, int y)
         {
             if (balls.Count == 0) return true;
-            foreach (AbstractBall b in balls)
+            foreach (AbstractBall c in balls)
             {
-                double distance = Math.Sqrt(Math.Pow((b.Position.X - x), 2) + Math.Pow((b.Position.Y - y), 2));
-                if (distance <= (2 * b.Radius + 20))
+                double distance = Math.Sqrt(Math.Pow((c.Position.X - x), 2) + Math.Pow((c.Position.Y - y), 2));
+                if (distance <= (2 * c.Radius + 20))
                 {
                     return false;
                 }
@@ -58,7 +59,7 @@ namespace Data
 
         private void CreateThreads()
         {
-            foreach (AbstractBall b in balls)
+            foreach (AbstractBall c in balls)
             {
                 Thread t = new Thread(() =>
                 {
@@ -70,7 +71,7 @@ namespace Data
                         {
                             lock (locked)
                             {
-                                b.Move(timer);
+                                c.Move(timer);
                             }
                             Thread.Sleep(15);
                             timer.Reset();
@@ -87,7 +88,7 @@ namespace Data
                 {
                     lock (lockedToSave)
                     {
-                        b.PropertyChanged += b.Update!;
+                        c.PropertyChanged += c.Update!;
                     }
                 });
                 threadsToSave.Add(tToSave);
@@ -115,9 +116,6 @@ namespace Data
             foreach (Thread t in threadsToSave)
             {
                 t.Interrupt();
-            }
-            lock (lockedToSave)
-            {
             }
         }
 
