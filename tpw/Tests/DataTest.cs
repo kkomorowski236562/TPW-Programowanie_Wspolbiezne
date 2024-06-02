@@ -34,7 +34,7 @@ namespace Tests
         [TestMethod]
         public void CirclePosTest()
         {
-            AbstractBall c = AbstractBall.CreateCircle(new Vector2(10, 15));
+            AbstractBall c = AbstractBall.CreateBall(new Vector2(10, 15));
             Assert.AreEqual(c.Position.X, 10);
             Assert.AreEqual(c.Position.Y, 15);
         }
