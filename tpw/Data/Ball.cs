@@ -11,14 +11,8 @@ namespace Data
 
         public override event EventHandler? PositionChanged
         {
-            add
-            {
-                _positionChanged += value;
-            }
-            remove
-            {
-                _positionChanged -= value;
-            }
+            add => _positionChanged += value;
+            remove => _positionChanged -= value;
         }
 
         internal Ball(Vector2 position)
@@ -68,7 +62,7 @@ namespace Data
 
         public override void Update(object s, EventArgs e)
         {
-            Logger.GetInstance().SaveDataAsYaml(new InformationAboutBall(_position.X, _position.Y, _speed.X, _speed.Y, GetHashCode()));
+            Logger.GetInstance().EnqueueData(new InformationAboutBall(_position.X, _position.Y, _speed.X, _speed.Y, GetHashCode()));
         }
     }
 }

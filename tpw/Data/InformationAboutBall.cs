@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Globalization;
-using System.Text.RegularExpressions;
 
 namespace Data
 {
@@ -12,6 +10,9 @@ namespace Data
         public double YSpeed { get; set; }
         public int Hash { get; set; }
         public string Date { get; set; }
+
+        private static readonly string DateFormat = "yyyy-MM-dd HH:mm:ss.fff";
+
         public InformationAboutBall(double XPos, double YPos, double XSpeed, double YSpeed, int Hash)
         {
             this.XPos = XPos;
@@ -19,18 +20,15 @@ namespace Data
             this.XSpeed = XSpeed;
             this.YSpeed = YSpeed;
             this.Hash = Hash;
-            string millisecondFormat = $"{NumberFormatInfo.CurrentInfo.NumberDecimalSeparator}fff";
-            string fullPattern = DateTimeFormatInfo.CurrentInfo.FullDateTimePattern;
-            fullPattern = Regex.Replace(fullPattern, "(:ss|:s)", $"$1{millisecondFormat}");
-            Date = DateTime.Now.ToString(fullPattern);
+            Date = DateTime.Now.ToString(DateFormat);
         }
 
-        public string ToString()
+        public override string ToString()
         {
             string toWrite = "circle:" + "\n";
             toWrite += "  - Hash: " + Hash + "\n";
             toWrite += "  - XPos: " + XPos + "\n";
-            toWrite += "  - Ypos: " + YPos + "\n";
+            toWrite += "  - YPos: " + YPos + "\n";
             toWrite += "  - XSpeed: " + XSpeed + "\n";
             toWrite += "  - YSpeed: " + YSpeed + "\n";
             toWrite += "  - Date: " + Date + "\n";
